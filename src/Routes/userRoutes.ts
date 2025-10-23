@@ -3,8 +3,8 @@ import { registrarUsuario, mostrarLogin } from '../Controllers/userController';
 
 const userRoutes = Router();
 
-userRoutes.get('/user/login', mostrarLogin);
-userRoutes.post('/user/register', registrarUsuario);
+userRoutes.get('/login', mostrarLogin);
+userRoutes.post('/login', registrarUsuario);
 
 export {
     userRoutes
