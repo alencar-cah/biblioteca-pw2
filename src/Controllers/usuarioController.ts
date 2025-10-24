@@ -1,6 +1,6 @@
 import { log } from "console";
 import { Request, Response } from "express";
-import { buscarEmail, inserir, Usuario } from "../models/user";
+import { buscarEmail, inserir, Usuario } from "../models/usuario";
 
 export function mostrarLogin(req: Request, res: Response) {
     res.render('login');
