@@ -1,10 +1,11 @@
 import { connection } from "../infra/connection";
 
 export type Categoria = {
-    id_categoria?: number
-    nome: string,
-    descricao: string
-}
+    id_categoria?: number; 
+    nome: string;
+    descricao?: string | null;
+};
+
 
 export async function inserirCategoria(categoria: Categoria) {
     await connection.query(
@@ -15,3 +16,5 @@ export async function inserirCategoria(categoria: Categoria) {
         ]
     );
 }
+
+// em processo
