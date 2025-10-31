@@ -30,8 +30,8 @@ export async function buscarEmail(email: String) {
 export async function atualizarUsuario(usuario: Usuario) {
     await connection.query(
         `
-        UPDATE usuario SET name=$1, password=$2, email=$3
-        WHERE id=$5;
+        UPDATE usuario SET nome=$1, senha=$2, email=$3
+        WHERE id=$4;
         `,
         [
             usuario.nome,
@@ -48,6 +48,11 @@ export async function deletarUsuario(id_usuario: string) {
     );
 }
 
-
-
+export async function verificarLogin(email: String, senha: String) {
+    const { rows } = await connection.query(
+        'SELECT * FROM usuario WHERE email=$1 AND senha=$2;',
+        [email, senha]
+    );
+    return rows[0];
+}
 
