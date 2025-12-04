@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-panel: #1b1b1d;
+      --sidebar: #161618;
+      --text-primary: #ffffff;
+      --text-secondary: #b5b5b5;
+      --border: #2a2a2d;
+      --accent: #3d6df2;
+      --radius: 10px;
+      --danger: #d64040;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+    }
+
+    .sidebar {
+      width: 230px;
+      background: var(--sidebar);
+      padding: 2rem 1.2rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .menu-item {
+      padding: .7rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      transition: .15s;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .title {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      padding: .7rem 1.2rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: .95rem;
+      border: none;
+    }
+
+    .table-box {
+      background: var(--bg-panel);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: .8rem;
+    }
+
+    th, td {
+      padding: .8rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      color: var(--text-secondary);
+    }
+
+    th {
+      color: white;
+    }
+
+    .btn-edit {
+      background: var(--accent);
+      padding: .4rem .8rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+      margin-right: .5rem;
+    }
+
+    .btn-delete {
+      background: var(--danger);
+      padding: .4rem .8rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+    }
+
+    .modal-container {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal {
+      background: var(--bg-panel);
+      padding: 2rem;
+      border-radius: var(--radius);
+      width: 400px;
+      border: 1px solid var(--border);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: .75rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #1f1f22;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .btn-close {
+      float: right;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <div class="logo">📚 Biblioteca</div>
+    <div class="menu">
+      <a href="/adm" class="menu-item">Dashboard</a>
+      <a href="/categoria/listar" class="menu-item active">Categorias</a>
+      <a href="/livros/listar" class="menu-item">Livros</a>
+      <a href="/logout" class="menu-item">Sair</a>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="header-row">
+      <div class="title">Categorias</div>
+      <button class="btn-primary" onclick="openModal()">Nova Categoria</button>
+    </div>
+    <% if (mensagem) { %>
+      <div class="alert" style="
+          margin-bottom: 1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          background: <%= mensagem.type === 'success' ? '#1e4620' : '#46201e' %>;
+          color: white;
+          border: 1px solid <%= mensagem.type === 'success' ? '#2ecc71' : '#e74c3c' %>;
+      ">
+        <%= mensagem.value %>
+      </div>
+    <% } %>
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% categorias.forEach(c => { %>
+            <tr>
+              <td><%= c.nome %></td>
+              <td><%= c.descricao || '-' %></td>
+              <td>
+                <button 
+                  class="btn-edit" 
+                  onclick="openEditModal('<%= c.id_categoria %>', '<%= c.nome %>', '<%= c.descricao || '' %>')">
+                  Editar
+                </button>
+                <button class="btn-delete" onclick="confirmDelete('<%= c.id_categoria %>')">Excluir</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-container" id="modal">
+    <div class="modal">
+      <span class="btn-close" onclick="closeModal()">✖</span>
+
+      <h3 style="margin-bottom:1rem;">Nova Categoria</h3>
+
+      <form action="/categoria/cadastrar" method="post">
+        <input type="text" name="nome" placeholder="Nome" class="form-input" required>
+        <input type="text" name="descricao" placeholder="Descrição" class="form-input">
+        <button class="btn-primary" style="width:100%;">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-container" id="modalEdit">
+    <div class="modal">
+      <span class="btn-close" onclick="closeEditModal()">✖</span>
+
+      <h3 style="margin-bottom:1rem;">Editar Categoria</h3>
+
+      <form action="/categoria/editar" method="post">
+        <input type="hidden" name="id_categoria" id="edit_id">
+
+        <input type="text" name="nome" id="edit_nome" class="form-input" required>
+        <input type="text" name="descricao" id="edit_descricao" class="form-input">
+
+        <button class="btn-primary" style="width:100%;">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function openEditModal(id, nome, descricao) {
+    document.getElementById("edit_id").value = id;
+    document.getElementById("edit_nome").value = nome;
+    document.getElementById("edit_descricao").value = descricao;
+
+    document.getElementById("modalEdit").style.display = "flex";
+  }
+
+  function closeEditModal() {
+    document.getElementById("modalEdit").style.display = "none";
+  }
+
+  function confirmDelete(id) {
+    if (confirm("Tem certeza que deseja excluir esta categoria?")) {
+      window.location.href = "/categoria/excluir/" + id;
+    }
+  }
+</script>
+
+  </script>
+
+</body>
+</html>

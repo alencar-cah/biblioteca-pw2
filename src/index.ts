@@ -1,6 +1,8 @@
 import express from 'express';
 import { usuarioRoutes } from './Routes/usuarioRoutes';
 import { AdmRoutes } from './Routes/adm_routes';
+import { CategoriaRoutes } from './Routes/categoriaRoutes';
+import { LivroRoutes } from './Routes/livroRoutes';
 import session from 'express-session';
 
 const app = express();
@@ -24,6 +26,9 @@ app.use(session({
 
 app.use(usuarioRoutes);
 app.use(AdmRoutes);
+app.use(CategoriaRoutes);
+app.use(LivroRoutes);
+
 
 app.listen(3333, () => {
     console.log('Servidor rodando no endereço http://localhost:3333');

@@ -60,7 +60,7 @@ export async function login(req: Request, res: Response) {
     }
 
     (req.session as any).usuario = {
-        name: usuario.nome,
+        nome: usuario.nome,
         email: usuario.email,
         id: usuario.id_usuario,
     }

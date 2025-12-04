@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livros</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-panel: #1b1b1d;
+      --sidebar: #161618;
+      --text-primary: #ffffff;
+      --text-secondary: #b5b5b5;
+      --border: #2a2a2d;
+      --accent: #3d6df2;
+      --radius: 10px;
+      --danger: #d64040;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Inter, sans-serif; }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+    }
+
+    .sidebar {
+      width: 230px;
+      background: var(--sidebar);
+      padding: 2rem 1.2rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .menu-item {
+      padding: .7rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      transition: .15s;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .title {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      padding: .7rem 1.2rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: .95rem;
+      border: none;
+    }
+
+    .table-box {
+      background: var(--bg-panel);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: .8rem;
+    }
+
+    th, td {
+      padding: .8rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      color: var(--text-secondary);
+    }
+
+    th { color: white; }
+
+    .btn-edit {
+      background: var(--accent);
+      padding: .4rem .8rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+      margin-right: .5rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-delete {
+      background: var(--danger);
+      padding: .4rem .8rem;
+      border-radius: var(--radius);
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+
+    .modal-container {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal {
+      background: var(--bg-panel);
+      padding: 2rem;
+      border-radius: var(--radius);
+      width: 450px;
+      border: 1px solid var(--border);
+    }
+
+    .form-input, select {
+      width: 100%;
+      padding: .75rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #1f1f22;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .btn-close {
+      float: right;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <div class="logo">📚 Biblioteca</div>
+    <div class="menu">
+      <a href="/adm" class="menu-item">Dashboard</a>
+      <a href="/categoria/listar" class="menu-item">Categorias</a>
+      <a href="/livros/listar" class="menu-item active">Livros</a>
+      <a href="/logout" class="menu-item">Sair</a>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <% if (mensagem) { %>
+      <div class="alert" style="
+          margin-bottom: 1rem;
+          padding: 1rem;
+          border-radius: 10px;
+          background: <%= mensagem.type === 'success' ? '#1e4620' : '#46201e' %>;
+          color: white;
+          border: 1px solid <%= mensagem.type === 'success' ? '#2ecc71' : '#e74c3c' %>;
+      ">
+        <%= mensagem.value %>
+      </div>
+    <% } %>
+
+    <div class="header-row">
+      <div class="title">Livros</div>
+      <button class="btn-primary" onclick="openModal()">Novo Livro</button>
+    </div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% livros.forEach(l => { %>
+            <tr>
+              <td><%= l.titulo %></td>
+              <td><%= l.autor %></td>
+              <td><%= l.categoria_nome || "-" %></td>
+              <td><%= l.status_leitura %></td>
+              <td>
+                <button class="btn-edit"
+                  onclick="openEditModal(
+                    '<%= l.id_livro %>',
+                    '<%= l.titulo %>',
+                    '<%= l.autor %>',
+                    '<%= l.editora || '' %>',
+                    '<%= l.ano_publicacao || '' %>',
+                    '<%= l.status_leitura %>',
+                    '<%= l.id_categoria || '' %>'
+                  )">
+                  Editar
+                </button>
+
+                <button class="btn-delete"
+                  onclick="confirmDelete('<%= l.id_livro %>')">
+                  Excluir
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MODAL CADASTRO -->
+  <div class="modal-container" id="modal">
+    <div class="modal">
+      <span class="btn-close" onclick="closeModal()">✖</span>
+      <h3 style="margin-bottom:1rem;">Novo Livro</h3>
+
+      <form action="/livros/cadastrar" method="post">
+        <input type="text" name="titulo" placeholder="Título" class="form-input" required>
+        <input type="text" name="autor" placeholder="Autor" class="form-input" required>
+        <input type="text" name="editora" placeholder="Editora" class="form-input">
+        <input type="number" name="ano_publicacao" placeholder="Ano" class="form-input">
+
+        <select name="status_leitura" class="form-input">
+          <option value="não_lido">Não Lido</option>
+          <option value="lendo">Lendo</option>
+          <option value="lido">Lido</option>
+        </select>
+
+        <select name="id_categoria" class="form-input">
+          <option value="">Sem categoria</option>
+          <% categorias.forEach(c => { %>
+            <option value="<%= c.id_categoria %>"><%= c.nome %></option>
+          <% }) %>
+        </select>
+
+        <button class="btn-primary" style="width:100%;">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL EDIÇÃO -->
+  <div class="modal-container" id="modalEdit">
+    <div class="modal">
+      <span class="btn-close" onclick="closeEditModal()">✖</span>
+      <h3 style="margin-bottom:1rem;">Editar Livro</h3>
+
+      <form action="/livros/editar" method="post">
+
+        <input type="hidden" id="edit_id" name="id_livro">
+
+        <input type="text" id="edit_titulo" name="titulo" class="form-input" required>
+        <input type="text" id="edit_autor" name="autor" class="form-input" required>
+        <input type="text" id="edit_editora" name="editora" class="form-input">
+        <input type="number" id="edit_ano" name="ano_publicacao" class="form-input">
+
+        <select id="edit_status" name="status_leitura" class="form-input">
+          <option value="não_lido">Não Lido</option>
+          <option value="lendo">Lendo</option>
+          <option value="lido">Lido</option>
+        </select>
+
+        <select id="edit_categoria" name="id_categoria" class="form-input">
+          <option value="">Sem categoria</option>
+          <% categorias.forEach(c => { %>
+            <option value="<%= c.id_categoria %>"><%= c.nome %></option>
+          <% }) %>
+        </select>
+
+        <button class="btn-primary" style="width:100%;">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function openEditModal(id, titulo, autor, editora, ano, status, categoria) {
+      document.getElementById("edit_id").value = id;
+      document.getElementById("edit_titulo").value = titulo;
+      document.getElementById("edit_autor").value = autor;
+      document.getElementById("edit_editora").value = editora;
+      document.getElementById("edit_ano").value = ano;
+      document.getElementById("edit_status").value = status;
+      document.getElementById("edit_categoria").value = categoria;
+
+      document.getElementById("modalEdit").style.display = "flex";
+    }
+
+    function closeEditModal() {
+      document.getElementById("modalEdit").style.display = "none";
+    }
+
+    function confirmDelete(id) {
+      if (confirm("Tem certeza que deseja excluir este livro?")) {
+        window.location.href = "/livros/excluir/" + id;
+      }
+    }
+  </script>
+
+</body>
+</html>

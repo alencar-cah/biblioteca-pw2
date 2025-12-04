@@ -1,95 +1,250 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro e Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <title>Autenticação</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: var(--bs-body-bg);
+    :root {
+      --bg-dark: #121212;
+      --bg-panel: #1b1b1d;
+      --text-primary: #ffffff;
+      --text-secondary: #b5b5b5;
+      --border: #2a2a2d;
+      --accent: #3d6df2;
+      --accent-hover: #3157c7;
+      --radius: 10px;
     }
 
-    .form-container {
-      width: 100%;
-      max-width: 400px;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1f1f22, #151517);
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .branding {
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .branding h1 {
+      font-weight: 600;
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .branding p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.4rem;
+    }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      flex: 1;
+      background: var(--bg-panel);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+      background: #2a2a2d;
+      color: var(--text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: .3rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 1.8rem;
+      font-size: .9rem;
+    }
+
+    /* INPUTS */
+    .form-label {
+      display: block;
+      margin-bottom: .35rem;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: .75rem .9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #1f1f22;
+      color: white;
+      font-size: .95rem;
+      margin-bottom: 1.2rem;
+      transition: .15s;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(61, 109, 242, 0.25);
+    }
+
+    .btn {
+      width: 100%;
+      padding: .85rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .15s;
+      margin-top: .5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Hide inactive forms */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
     }
   </style>
 </head>
 
 <body>
-  <div class="form-container bg-body">
-    <ul class="nav nav-tabs mb-3" id="tabForm" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
-          role="tab">Login</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button"
-          role="tab">Cadastro</button>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <!-- Login -->
-      <div class="tab-pane fade show active" id="login" role="tabpanel">
-        <h4 class="mb-3">Login</h4>
-        <form method="post" action="/user/login">
-          <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email</label>
-            <input name="email" type="email" class="form-control" id="loginEmail" required>
-          </div>
-          <div class="mb-3">
-            <label for="loginPassword" class="form-label">Senha</label>
-            <input name="senha" type="password" class="form-control" id="loginPassword" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Entrar</button>
+
+  <!-- LEFT SIDE -->
+  <div class="left-panel">
+    <div class="branding">
+      <h1>Sistema Biblioteca</h1>
+      <p>
+       Um sistema bem sistemático.<br>
+        Faça login ou crie sua conta para continuar.
+      </p>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <div class="tab-btn active" data-tab="login">Login</div>
+        <div class="tab-btn" data-tab="register">Cadastro</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="login" class="tab-content active">
+        <div class="title">Bem-Vindo</div>
+        <div class="subtitle">Entre na sua conta</div>
+
+        <form action="/user/login" method="post">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" required>
+
+          <label class="form-label">Senha</label>
+          <input class="form-input" type="password" name="senha" required>
+
+          <button class="btn btn-primary">Entrar</button>
         </form>
       </div>
-      <!-- Cadastro -->
-      <div class="tab-pane fade" id="register" role="tabpanel">
-        <h4 class="mb-3">Cadastro</h4>
-        <form method="post" action="/login">
-          <div class="mb-3">
-            <label for="registerName" class="form-label">Nome</label>
-            <input name="nome" type="text" class="form-control" id="registerName" required>
-          </div>
-          <div class="mb-3">
-            <label for="registerEmail" class="form-label">Email</label>
-            <input name="email" type="email" class="form-control" id="registerEmail" required>
-          </div>
-          <div class="mb-3">
-            <label for="registerPassword" class="form-label">Senha</label>
-            <input name="senha" type="password" class="form-control" id="registerPassword" required>
-          </div>
-          <button type="submit" class="btn btn-success w-100">Cadastrar</button>
+
+      <!-- CADASTRO -->
+      <div id="register" class="tab-content">
+        <div class="title">Criar Conta</div>
+        <div class="subtitle">Preencha seus dados</div>
+
+        <form action="/login" method="post">
+          <label class="form-label">Nome</label>
+          <input class="form-input" type="text" name="nome" required>
+
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" required>
+
+          <label class="form-label">Senha</label>
+          <input class="form-input" type="password" name="senha" required>
+
+          <button class="btn btn-primary">Cadastrar</button>
         </form>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
 
-  <% if(response) { %>
-    <script>
-      Swal.fire({
-        text: '<%=response.value%>',
-        icon: '<%=response.type%>',
-        theme: 'dark'
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        contents.forEach(c => c.classList.remove("active"));
+        document.getElementById(tab.dataset.tab).classList.add("active");
       });
-    </script>
-    <% } %>
+    });
+  </script>
 
 </body>
 
 </html>
-

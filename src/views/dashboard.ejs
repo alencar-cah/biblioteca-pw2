@@ -1,11 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Biblioteca</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-panel: #1b1b1d;
+      --sidebar: #161618;
+      --text-primary: #ffffff;
+      --text-secondary: #b5b5b5;
+      --border: #2a2a2d;
+      --accent: #3d6df2;
+      --radius: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 230px;
+      background: var(--sidebar);
+      padding: 2rem 1.2rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .menu-item {
+      padding: .7rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: .15s;
+      text-decoration: none;
+      display: block;
+
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .welcome {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-panel);
+      padding: .6rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* CARDS */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: .9rem;
+      color: var(--text-secondary);
+      margin-bottom: .4rem;
+    }
+
+    .card-value {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    /* TABLE */
+    .table-box {
+      background: var(--bg-panel);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th,td {
+      padding: .8rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      color: var(--text-secondary);
+    }
+
+    th {
+      color: white;
+      font-weight: 600;
+    }
+
+    td:nth-child(3), th:nth-child(3) {
+      text-align: center;
+    }
+
+    .badge {
+      padding: .3rem .7rem;
+      border-radius: 6px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .b-lido {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .b-lendo {
+      background: #0277bd;
+      color: white;
+    }
+
+    .b-nao {
+      background: #616161;
+      color: white;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Bem vindo! <%= usuario.nome%> </h1>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">📚 Biblioteca</div>
+
+    <div class="menu">
+      <a href="/adm" class="menu-item active">Dashboard</a>
+      <a href="/categoria/listar" class="menu-item">Categorias</a>
+      <a href="/livros/listar" class="menu-item">Livros</a>
+      <a href="/logout" class="menu-item">Sair</a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="header">
+      <div class="welcome">Bem-vindo, <%= usuario.nome %> 👋</div>
+
+      <div class="user-box">
+        <div class="avatar"><%= usuario.nome[0] %></div>
+        <span><%= usuario.nome %></span>
+      </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Total de Livros</div>
+        <div class="card-value"><%= totalLivros %></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Livros Lidos</div>
+        <div class="card-value"><%= livrosLidos %></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Lendo</div>
+        <div class="card-value"><%= livrosLendo %></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Não Lidos</div>
+        <div class="card-value"><%= livrosNaoLidos %></div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-box">
+      <h3>Últimos livros adicionados</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Status</th>
+            <th>Categoria</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% livrosRecentes.forEach(livro => { %>
+            <tr>
+              <td><%= livro.titulo %></td>
+              <td><%= livro.autor %></td>
+              <td>
+                <% if (livro.status_leitura === 'lido') { %>
+                  <span class="badge b-lido">Lido</span>
+                <% } else if(livro.status_leitura === 'lendo') { %>
+                  <span class="badge b-lendo">Lendo</span>
+                <% } else { %>
+                  <span class="badge b-nao">Não lido</span>
+                <% } %>
+              </td>
+              <td><%= livro.categoria_nome || 'Sem categoria' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
 </body>
+
 </html>
